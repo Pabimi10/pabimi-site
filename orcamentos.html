@@ -12,7 +12,6 @@
   body { font-family: sans-serif; background: #faf7f2; }
   #lock {
     min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    background: linear-height(135deg, #2c1810, #3d2b1f);
     background: #3d2b1f;
   }
   .lock-box {
@@ -52,8 +51,6 @@
 </div>
 <div id="app" style="display:none"></div>
 
-<script type="text/babel" data-type="module" id="appscript"></script>
-
 <script>
 const SENHA = '197500';
 let unlocked = false;
@@ -72,18 +69,26 @@ function check() {
 
 function loadApp() {
   fetch('pabimi_v5.jsx')
-    .then(r => r.text())
+    .then(r => {
+      if (!r.ok) throw new Error('Erro ao carregar app: ' + r.status);
+      return r.text();
+    })
     .then(code => {
-      const script = document.createElement('script');
-      script.type = 'text/babel';
-      script.setAttribute('data-presets', 'react');
-      script.textContent = code + `
+      const fullCode = code + `
         const rootEl = document.getElementById('app');
         const root = ReactDOM.createRoot(rootEl);
         root.render(React.createElement(App));
       `;
+      const transformed = Babel.transform(fullCode, {
+        presets: ['react']
+      }).code;
+      const script = document.createElement('script');
+      script.textContent = transformed;
       document.body.appendChild(script);
-      Babel.transformScriptTags();
+    })
+    .catch(err => {
+      document.getElementById('app').innerHTML =
+        '<p style="padding:40px;color:red">Erro ao carregar orçamentos: ' + err.message + '</p>';
     });
 }
 </script>
