@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect, useCallback } from "react";
+const { useState, useMemo, useRef, useEffect, useCallback } = React;
 
 // ═══════════════════════════════════════════════════════════════════
 // MATERIAIS
@@ -2372,7 +2372,7 @@ function CartScreen({ items, onRemove, onBack, mkt }) {
   );
 }
 
-export default function App() {
+function App() {
     const [screen,setScreen]   = useState("home");
   const [prod,setProd]       = useState(null);
   const [fixosConfig,setFCfg]= useState(FIXOS_DEFAULT);
